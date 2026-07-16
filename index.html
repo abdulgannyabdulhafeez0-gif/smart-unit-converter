@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OmniConvert - Premium Unit Converter</title>
+  <style>
+    :root {
+      --primary: #6366f1;      /* Modern Indigo */
+      --primary-hover: #4f46e5;
+      --bg-slate: #0b0f19;     /* Deep Onyx Slate */
+      --card-bg: #151f32;      /* Polished Slate Card */
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #24324d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-slate);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Professional Branding */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #818cf8, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* App Container */
+    .converter-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Navigation Tabs */
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(11, 15, 25, 0.6);
+      padding: 6px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 0;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: var(--text-main);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Input Fields */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+    }
+
+    .control-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    input[type="number"] {
+      flex: 1.5;
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+    }
+
+    select {
+      flex: 1;
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Swap Button */
+    .swap-divider {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
+    .swap-btn {
+      background: var(--primary);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .swap-btn:active {
+      transform: scale(0.9) rotate(180deg);
+    }
+
+    .swap-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+
+    /* Action Buttons */
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary {
+      background: #1e293b;
+      color: white;
+    }
+
+    .btn-secondary:active {
+      background: #334155;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-hover);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      background: #10b981;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>OmniConvert</h1>
+    <p class="subtitle">SaaS Multi-Unit Converter</p>
+  </header>
+
+  <div class="converter-card">
+    <div class="category-tabs">
+      <button class="tab-btn active" onclick="switchCategory('length', this)">Length</button>
+      <button class="tab-btn" onclick="switchCategory('weight', this)">Weight</button>
+      <button class="tab-btn" onclick="switchCategory('temperature', this)">Temp</button>
+    </div>
+
+    <div class="input-group">
+      <label>From</label>
+      <div class="control-row">
+        <input type="number" id="from-val" value="1" oninput="convert(true)">
+        <select id="from-unit" onchange="convert(true)"></select>
+      </div>
+    </div>
+
+    <div class="swap-divider">
+      <button class="swap-btn" onclick="swapUnits()">
+        <svg viewBox="0 0 24 24">
+          <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="input-group">
+      <label>To</label>
+      <div class="control-row">
+        <input type="number" id="to-val" oninput="convert(false)">
+        <select id="to-unit" onchange="convert(true)"></select>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn btn-secondary" onclick="resetApp()">Reset</button>
+      <button class="action-btn btn-primary" onclick="copyResult()">Copy Output</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copied to Clipboard!</div>
+
+  <script>
+    const dataset = {
+      length: {
+        units: { meter: 1, kilometer: 0.001, mile: 0.000621371, yard: 1.09361, foot: 3.28084 },
+        labels: { meter: "Meters (m)", kilometer: "Kilometers (km)", mile: "Miles (mi)", yard: "Yards (yd)", foot: "Feet (ft)" }
+      },
+      weight: {
+        units: { kilogram: 1, gram: 1000, pound: 2.20462, ounce: 35.274 },
+        labels: { kilogram: "Kilograms (kg)", gram: "Grams (g)", pound: "Pounds (lbs)", ounce: "Ounces (oz)" }
+      },
+      temperature: {
+        units: { celsius: "C", fahrenheit: "F", kelvin: "K" },
+        labels: { celsius: "Celsius (°C)", fahrenheit: "Fahrenheit (°F)", kelvin: "Kelvin (K)" }
+      }
+    };
+
+    let currentCategory = 'length';
+
+    function initDropdowns() {
+      const categoryData = dataset[currentCategory];
+      const fromSelect = document.getElementById('from-unit');
+      const toSelect = document.getElementById('to-unit');
+
+      fromSelect.innerHTML = '';
+      toSelect.innerHTML = '';
+
+      Object.keys(categoryData.labels).forEach((key) => {
+        let opt1 = document.createElement('option');
+        opt1.value = key;
+        opt1.innerHTML = categoryData.labels[key];
+        let opt2 = opt1.cloneNode(true);
+
+        fromSelect.appendChild(opt1);
+        toSelect.appendChild(opt2);
+      });
+
+      toSelect.selectedIndex = 1;
+      convert(true);
+    }
+
+    function switchCategory(catName, element) {
+      currentCategory = catName;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+      initDropdowns();
+    }
+
+    function convert(isFromInput) {
+      const fromUnit = document.getElementById('from-unit').value;
+      const toUnit = document.getElementById('to-unit').value;
+      const fromInput = document.getElementById('from-val');
+      const toInput = document.getElementById('to-val');
+
+      let sourceInput = isFromInput ? fromInput : toInput;
+      let targetInput = isFromInput ? toInput : fromInput;
+      let sourceUnitObj = isFromInput ? fromUnit : toUnit;
+      let targetUnitObj = isFromInput ? toUnit : fromUnit;
+
+      let value = parseFloat(sourceInput.value);
+      if (isNaN(value)) {
+        targetInput.value = '';
+        return;
+      }
+
+      if (currentCategory === 'temperature') {
+        targetInput.value = calculateTemperature(value, sourceUnitObj, targetUnitObj).toFixed(2);
+        return;
+      }
+
+      const rates = dataset[currentCategory].units;
+      const valInBaseUnit = value / rates[sourceUnitObj];
+      const convertedVal = valInBaseUnit * rates[targetUnitObj];
+      
+      targetInput.value = convertedVal % 1 === 0 ? convertedVal : parseFloat(convertedVal.toFixed(5));
+    }
+
+    function calculateTemperature(value, from, to) {
+      if (from === to) return value;
+      let tempInC;
+
+      if (from === 'celsius') tempInC = value;
+      else if (from === 'fahrenheit') tempInC = (value - 32) * 5/9;
+      else if (from === 'kelvin') tempInC = value - 273.15;
+
+      if (to === 'celsius') return tempInC;
+      if (to === 'fahrenheit') return (tempInC * 9/5) + 32;
+      if (to === 'kelvin') return tempInC + 273.15;
+    }
+
+    function swapUnits() {
+      const fromSelect = document.getElementById('from-unit');
+      const toSelect = document.getElementById('to-unit');
+      
+      const temp = fromSelect.value;
+      fromSelect.value = toSelect.value;
+      toSelect.value = temp;
+
+      convert(true);
+    }
+
+    function resetApp() {
+      document.getElementById('from-val').value = 1;
+      convert(true);
+    }
+
+    function copyResult() {
+      const toVal = document.getElementById('to-val').value;
+      const toUnitText = document.getElementById('to-unit').options[document.getElementById('to-unit').selectedIndex].text;
+      
+      if (!toVal) return;
+
+      navigator.clipboard.writeText(`${toVal} ${toUnitText}`).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      });
+    }
+
+    window.onload = initDropdowns;
+  </script>
+</body>
+</html>
